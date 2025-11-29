@@ -2,37 +2,63 @@
 <html lang="th">
 <head>
   <meta charset="UTF-8">
-  <title>Token Protected Page</title>
+  <title>NFC Tap (Generate Token)</title>
 </head>
 <body>
-  <div id="app">กำลังตรวจสอบโทเค็น...</div>
+  <div id="app">กำลังสร้างโทเคนใหม่...</div>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore-compat.js"></script>
 
   <script>
-    // 1) รายชื่อโทเค็น ตัวอย่างไว้ทดสอบก่อน (เอาไว้ลอง!)
-    const validTokens = ["TEST123", "HELLO999", "VIP001"];
+    // 🔧 ใส่ config โปรเจกต์ Firebase ของคุณเองตรงนี้
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+      projectId: "YOUR_PROJECT_ID",
+    };
 
-    // 2) เอา token จาก URL (เช่น ?token=TEST123)
-    const params = new URLSearchParams(window.location.search);
-    const token = params.get("token");
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
 
     const app = document.getElementById("app");
 
-    if (!token) {
-      app.innerHTML = `
-        ❌ ไม่มีโทเค็น<br>
-        กรุณาแตะ NFC เพื่อเข้าหน้านี้
-      `;
-    } else if (!validTokens.includes(token)) {
-      app.innerHTML = `
-        ⛔ โทเค็นผิด หรือหมดอายุ<br>
-        ติดต่อผู้ดูแลเพื่อรับสิทธิ์ใหม่
-      `;
-    } else {
-      app.innerHTML = `
-        🎉 เข้าถึงสำเร็จ!<br>
-        คุณปลดล็อกเนื้อหาพิเศษเรียบร้อยแล้ว
-      `;
+    function show(msg) {
+      app.innerHTML = msg;
     }
+
+    // ฟังก์ชันสร้างโทเคนแบบสุ่ม
+    function generateToken() {
+      return Math.random().toString(36).slice(2, 10); // ตัวอย่าง: "k3f9ab1z"
+    }
+
+    async function main() {
+      try {
+        const token = generateToken();
+
+        // สร้าง doc ใหม่ใน collection "tokens"
+        // ใช้ชื่อ doc = token เลย จะได้หาได้ง่าย
+        await db.collection("tokens").doc(token).set({
+          used: false,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        // แสดงให้ดูแว้บหนึ่ง (เวลาเทส)
+        show(`สร้างโทเคนใหม่แล้ว: <b>${token}</b><br>กำลังพาไปหน้า secure...`);
+
+        // พาไปหน้า secure.html พร้อม token
+        setTimeout(() => {
+          window.location.href = `secure.html?token=${encodeURIComponent(token)}`;
+        }, 800);
+
+      } catch (err) {
+        console.error(err);
+        show("⚠ เกิดข้อผิดพลาดในการสร้างโทเคน");
+      }
+    }
+
+    main();
   </script>
 </body>
 </html>
