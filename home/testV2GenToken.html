@@ -2,16 +2,7 @@
 <body>
   <script src="https://taithai-tai.github.io/app/token.js"></script>
     <script>
-      const params = new URLSearchParams(window.location.search);
-      const token = params.get("token");
-    
-      if (!token) {
-        // ยังไม่มี token → สร้างใหม่
         Token.create({ target: "testV2home.html" });
-      } else {
-        // มี token อยู่ก่อน → เข้าหน้า home เลย (ไม่สร้างใหม่)
-        window.location.href = "testV2home.html";
-      }
     </script>
 </body>
 </html>
