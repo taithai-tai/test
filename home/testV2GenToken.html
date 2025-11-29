@@ -1,11 +1,8 @@
 <html>
 <body>
-  <script src="https://taithai-tai.github.io/token/token.js"></script>
+  <script src="https://taithai-tai.github.io/app/token.js"></script>
     <script>
-      Token.guard({
-        tokenPage: "testV2GenToken.html",
-        cleanUrl: false   // 👈 เพิ่มบรรทัดนี้
-      });
+      Token.create({ target: "testV2home.html" });
     </script>
 </body>
 </html>
