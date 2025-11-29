@@ -2,73 +2,69 @@
 <html lang="th">
 <head>
   <meta charset="UTF-8">
-  <title>NFC Token Access</title>
+  <title>Secure Page</title>
 </head>
 <body>
   <div id="app">กำลังตรวจสอบโทเค็น...</div>
 
-  <!-- Firebase SDK (ใช้แบบ compat ให้เขียนง่าย) -->
+  <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore-compat.js"></script>
 
   <script>
-    // TODO: ตรงนี้ให้คุณไป copy config จาก Firebase project ของคุณมาใส่แทนทั้งหมด
-    // ใน Firebase console → Project settings → ที่หัวข้อ "Your apps" → Web app → Copy config
     const firebaseConfig = {
-      apiKey: "AIzaSyDW0JNNunJiyhhmgYP4S31QE1SZffgmhto",
-      authDomain: "token-ea7cf.firebaseapp.com",
-      projectId: "token-ea7cf",
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+      projectId: "YOUR_PROJECT_ID",
     };
 
-    // เริ่ม Firebase
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
     const app = document.getElementById("app");
-
-    function show(message) {
-      app.innerHTML = message;
+    function show(msg) {
+      app.innerHTML = msg;
     }
 
-    // ดึง token จาก URL เช่น ?token=VIP001
     const params = new URLSearchParams(window.location.search);
     const token = params.get("token");
 
     async function checkToken() {
       if (!token) {
-        show("❌ ไม่มีโทเค็นในลิงก์<br>กรุณาแตะ NFC เพื่อเข้าถึง");
+        show("❌ ไม่มีโทเค็นในลิงก์<br>กรุณาเข้าใหม่ผ่านการแตะ NFC (หรือตอนเทสให้เริ่มที่ tap.html)");
         return;
       }
 
       try {
-        // หา token ใน collection "tokens" ที่ field value == token ใน URL
-        const q = await db.collection("tokens")
-          .where("value", "==", token)
-          .limit(1)
-          .get();
+        const docRef = db.collection("tokens").doc(token);
+        const snap = await docRef.get();
 
-        if (q.empty) {
-          show("⛔ โทเค็นไม่ถูกต้อง หรือไม่มีในระบบ");
+        if (!snap.exists) {
+          show("⛔ โทเค็นไม่ถูกต้อง หรือไม่เคยถูกสร้าง");
           return;
         }
 
-        const doc = q.docs[0];
-        const data = doc.data();
+        const data = snap.data();
 
         if (data.used) {
-          show("⛔ โทเค็นนี้ถูกใช้ไปแล้ว<br>กรุณาแตะ NFC เพื่อขอสิทธิ์ใหม่");
+          show("⛔ โทเค็นนี้ถูกใช้ไปแล้ว<br>แตะ NFC ใหม่เพื่อรับโทเค็นใหม่");
           return;
         }
 
-        // ถ้าอยากเช็กวันหมดอายุ ก็เพิ่ม field เช่น expiresAt แล้วมาเช็กในนี้ได้
+        // ✅ ใช้ได้ครั้งแรก → mark ว่าใช้แล้ว
+        await docRef.update({
+          used: true,
+          usedAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
 
-        // ✅ มาถึงตรงนี้คือ token ใช้ได้ → mark ว่าใช้แล้วทันที (one-time)
-        await doc.ref.update({ used: true });
+        // ✅ ตรงนี้คือเฉพาะคนที่ใช้โทเค็นครั้งแรกเท่านั้น
+        show(`
+          🎉 ยินดีต้อนรับ!<br>
+          โทเค็นนี้ถูกต้อง และตอนนี้ถูกใช้แล้ว (ใช้ซ้ำไม่ได้)<br><br>
+          <b>นี่คือเนื้อหาพิเศษของคุณ</b>
+        `);
 
-        // แสดงเนื้อหาพิเศษ หรือจะ redirect ไปหน้าอื่นก็ได้
-        show("🎉 ยินดีต้อนรับ!<br>โทเค็นถูกต้องและถูกใช้เรียบร้อยแล้ว");
-
-        // ถ้าอยากพาไปหน้า home.html หลังจากเช็กผ่าน:
+        // ถ้าคุณมีหน้า main เช่น home.html:
         // setTimeout(() => {
         //   window.location.href = "home.html";
         // }, 1000);
