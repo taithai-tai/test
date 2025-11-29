@@ -2,26 +2,12 @@
 <html lang="th">
 <head>
   <meta charset="UTF-8">
-  <title>NFC Tap (Generate Token)</title>
+  <title>NFC Tap (No Firebase)</title>
 </head>
 <body>
   <div id="app">กำลังสร้างโทเคนใหม่...</div>
 
-  <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore-compat.js"></script>
-
   <script>
-    // 🔧 ใส่ config โปรเจกต์ Firebase ของคุณเองตรงนี้
-    const firebaseConfig = {
-      apiKey: "YOUR_API_KEY",
-      authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-      projectId: "YOUR_PROJECT_ID",
-    };
-
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
-
     const app = document.getElementById("app");
 
     function show(msg) {
@@ -30,32 +16,38 @@
 
     // ฟังก์ชันสร้างโทเคนแบบสุ่ม
     function generateToken() {
-      return Math.random().toString(36).slice(2, 10); // ตัวอย่าง: "k3f9ab1z"
+      return Math.random().toString(36).slice(2, 10); // เช่น "k3f9ab1z"
     }
 
-    async function main() {
+    function getTokenStore() {
+      // ดึงข้อมูล token ทั้งหมดที่เคยสร้างในเครื่องนี้จาก localStorage
+      const raw = localStorage.getItem("tokensStore");
+      if (!raw) return {};
       try {
-        const token = generateToken();
-
-        // สร้าง doc ใหม่ใน collection "tokens"
-        // ใช้ชื่อ doc = token เลย จะได้หาได้ง่าย
-        await db.collection("tokens").doc(token).set({
-          used: false,
-          createdAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
-
-        // แสดงให้ดูแว้บหนึ่ง (เวลาเทส)
-        show(`สร้างโทเคนใหม่แล้ว: <b>${token}</b><br>กำลังพาไปหน้า secure...`);
-
-        // พาไปหน้า secure.html พร้อม token
-        setTimeout(() => {
-          window.location.href = `https://taithai-tai.github.io/test/home?token=${encodeURIComponent(token)}`;
-        }, 800);
-
-      } catch (err) {
-        console.error(err);
-        show("⚠ เกิดข้อผิดพลาดในการสร้างโทเคน");
+        return JSON.parse(raw);
+      } catch (e) {
+        return {};
       }
+    }
+
+    function saveTokenStore(store) {
+      localStorage.setItem("tokensStore", JSON.stringify(store));
+    }
+
+    function main() {
+      const store = getTokenStore();
+      const newToken = generateToken();
+
+      // เก็บโทเคนใหม่ใน store ของเครื่องนี้
+      store[newToken] = { used: false, createdAt: Date.now() };
+      saveTokenStore(store);
+
+      show(`สร้างโทเคนใหม่แล้ว: <b>${newToken}</b><br>กำลังพาไปหน้า secure...`);
+
+      // เด้งไปหน้า secure.html พร้อมโทเคนใหม่
+      setTimeout(() => {
+        window.location.href = `secure.html?token=${encodeURIComponent(newToken)}`;
+      }, 700);
     }
 
     main();
