@@ -2,329 +2,84 @@
 <html lang="th">
 <head>
   <meta charset="UTF-8">
-  <title>System Test | Taithai</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-
-  <!-- ฟอนต์สวย ๆ จาก Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
-
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    body {
-      font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      /* ไล่สีพื้นหลังแบบ modern */
-      background: radial-gradient(circle at top, #fce7f3, #e0f2fe 40%, #0f172a 95%);
-      color: #0f172a;
-    }
-
-    .glass-card {
-      position: relative;
-      width: 100%;
-      max-width: 520px;
-      padding: 32px 28px 26px;
-      border-radius: 24px;
-      background: rgba(255, 255, 255, 0.82);
-      box-shadow:
-        0 24px 60px rgba(15, 23, 42, 0.32),
-        0 0 0 1px rgba(148, 163, 184, 0.25);
-      backdrop-filter: blur(18px);
-      border: 1px solid rgba(226, 232, 240, 0.9);
-      overflow: hidden;
-    }
-
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 4px 10px;
-      border-radius: 999px;
-      font-size: 11px;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      background: rgba(15, 23, 42, 0.04);
-      color: #64748b;
-      margin-bottom: 18px;
-    }
-
-    .badge-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 999px;
-      background: #22c55e;
-      box-shadow: 0 0 0 6px rgba(34, 197, 94, 0.2);
-    }
-
-    .title {
-      font-size: 26px;
-      line-height: 1.25;
-      font-weight: 600;
-      color: #020617;
-      margin-bottom: 10px;
-    }
-
-    .subtitle {
-      font-size: 14px;
-      line-height: 1.6;
-      color: #6b7280;
-      margin-bottom: 22px;
-    }
-
-    .meta-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px 16px;
-      margin-bottom: 22px;
-      font-size: 12px;
-      color: #6b7280;
-    }
-
-    .meta-item {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 3px 9px;
-      border-radius: 999px;
-      background: #f1f5f9;
-    }
-
-    .meta-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 999px;
-      background: #0ea5e9;
-    }
-
-    .divider {
-      width: 100%;
-      height: 1px;
-      background: linear-gradient(to right, transparent, #e2e8f0, transparent);
-      margin-bottom: 18px;
-    }
-
-    .env-box {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 10px 12px;
-      border-radius: 16px;
-      background: #0f172a;
-      color: #e5e7eb;
-      margin-bottom: 18px;
-    }
-
-    .env-label {
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.09em;
-      color: #9ca3af;
-      margin-bottom: 4px;
-    }
-
-    .env-name {
-      font-size: 13px;
-      font-weight: 500;
-    }
-
-    .env-pill {
-      font-size: 11px;
-      padding: 4px 9px;
-      border-radius: 999px;
-      background: rgba(15, 23, 42, 1);
-      border: 1px solid rgba(148, 163, 184, 0.8);
-      color: #e5e7eb;
-    }
-
-    .buttons {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-
-    .btn-primary,
-    .btn-ghost {
-      border-radius: 999px;
-      padding: 8px 14px;
-      font-size: 13px;
-      font-weight: 500;
-      border: none;
-      cursor: pointer;
-      transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease,
-        color 0.15s ease, border-color 0.15s ease;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .btn-primary {
-      background: #020617;
-      color: #f9fafb;
-      box-shadow: 0 10px 25px rgba(15, 23, 42, 0.45);
-    }
-
-    .btn-primary:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 18px 35px rgba(15, 23, 42, 0.55);
-      background: #020617;
-    }
-
-    .btn-ghost {
-      background: transparent;
-      color: #334155;
-      border: 1px solid #cbd5f5;
-    }
-
-    .btn-ghost:hover {
-      background: #0f172a;
-      color: #e5e7eb;
-      border-color: #0f172a;
-    }
-
-    .btn-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 999px;
-      background: #22c55e;
-    }
-
-    .corner-orb {
-      position: absolute;
-      width: 140px;
-      height: 140px;
-      border-radius: 999px;
-      background: radial-gradient(circle, rgba(56, 189, 248, 0.4), transparent 70%);
-      top: -40px;
-      right: -40px;
-      opacity: 0.7;
-      pointer-events: none;
-    }
-
-    .corner-orb-2 {
-      position: absolute;
-      width: 120px;
-      height: 120px;
-      border-radius: 999px;
-      background: radial-gradient(circle, rgba(244, 114, 182, 0.35), transparent 70%);
-      bottom: -40px;
-      left: -40px;
-      opacity: 0.8;
-      pointer-events: none;
-    }
-
-    .corner-tag {
-      position: absolute;
-      top: 18px;
-      right: 24px;
-      font-size: 11px;
-      padding: 3px 8px;
-      border-radius: 999px;
-      background: rgba(15, 23, 42, 0.88);
-      color: #e5e7eb;
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.5);
-    }
-
-    .corner-tag-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 999px;
-      background: #22c55e;
-    }
-
-    /* ให้ทุกอย่างดูละมุนขึ้นบนจอเล็ก */
-    @media (max-width: 600px) {
-      .glass-card {
-        margin: 16px;
-        padding: 22px 18px 20px;
-        border-radius: 20px;
-      }
-
-      .title {
-        font-size: 22px;
-      }
-
-      .subtitle {
-        font-size: 13px;
-      }
-
-      .env-box {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 8px;
-      }
-
-      .corner-tag {
-        top: 14px;
-        right: 16px;
-      }
-    }
-  </style>
+  <title>NFC Token Access</title>
 </head>
 <body>
-  <main class="glass-card">
-    <div class="corner-orb"></div>
-    <div class="corner-orb-2"></div>
+  <div id="app">กำลังตรวจสอบโทเค็น...</div>
 
-    <div class="corner-tag">
-      <span class="corner-tag-dot"></span>
-      LIVE · Test
-    </div>
+  <!-- Firebase SDK (ใช้แบบ compat ให้เขียนง่าย) -->
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore-compat.js"></script>
 
-    <div class="badge">
-      <span class="badge-dot"></span>
-      System Test Environment
-    </div>
+  <script>
+    // TODO: ตรงนี้ให้คุณไป copy config จาก Firebase project ของคุณมาใส่แทนทั้งหมด
+    // ใน Firebase console → Project settings → ที่หัวข้อ "Your apps" → Web app → Copy config
+    const firebaseConfig = {
+      apiKey: "AIzaSyDW0JNNunJiyhhmgYP4S31QE1SZffgmhto",
+      authDomain: "token-ea7cf.firebaseapp.com",
+      projectId: "token-ea7cf",
+    };
 
-    <h1 class="title">Minimal Test Page พร้อมใช้งาน ✅</h1>
-    <p class="subtitle">
-      หน้านี้สร้างมาเพื่อใช้ทดสอบระบบโฮสติ้ง / เซิร์ฟเวอร์ / DNS หรือการ Deploy เท่านั้น
-      <br>คุณสามารถแก้ไข ลบ หรือเพิ่มโค้ดส่วนอื่น ๆ ได้ตามต้องการ
-    </p>
+    // เริ่ม Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
 
-    <div class="meta-row">
-      <div class="meta-item">
-        <span class="meta-dot"></span>
-        HTML Only
-      </div>
-      <div class="meta-item">
-        <span class="meta-dot" style="background:#22c55e;"></span>
-        No Backend
-      </div>
-      <div class="meta-item">
-        <span class="meta-dot" style="background:#a855f7;"></span>
-        Safe to Modify
-      </div>
-    </div>
+    const app = document.getElementById("app");
 
-    <div class="divider"></div>
+    function show(message) {
+      app.innerHTML = message;
+    }
 
-    <section class="env-box">
-      <div>
-        <div class="env-label">Current Mode</div>
-        <div class="env-name">Taithai / System Testing Page</div>
-      </div>
-      <div class="env-pill">Status: Running</div>
-    </section>
+    // ดึง token จาก URL เช่น ?token=VIP001
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get("token");
 
-    <div class="buttons">
-      <button class="btn-primary">
-        <span class="btn-dot"></span>
-        Test Completed
-      </button>
-      <button class="btn-ghost">
-        View Source & Edit
-      </button>
-    </div>
-  </main>
+    async function checkToken() {
+      if (!token) {
+        show("❌ ไม่มีโทเค็นในลิงก์<br>กรุณาแตะ NFC เพื่อเข้าถึง");
+        return;
+      }
+
+      try {
+        // หา token ใน collection "tokens" ที่ field value == token ใน URL
+        const q = await db.collection("tokens")
+          .where("value", "==", token)
+          .limit(1)
+          .get();
+
+        if (q.empty) {
+          show("⛔ โทเค็นไม่ถูกต้อง หรือไม่มีในระบบ");
+          return;
+        }
+
+        const doc = q.docs[0];
+        const data = doc.data();
+
+        if (data.used) {
+          show("⛔ โทเค็นนี้ถูกใช้ไปแล้ว<br>กรุณาแตะ NFC เพื่อขอสิทธิ์ใหม่");
+          return;
+        }
+
+        // ถ้าอยากเช็กวันหมดอายุ ก็เพิ่ม field เช่น expiresAt แล้วมาเช็กในนี้ได้
+
+        // ✅ มาถึงตรงนี้คือ token ใช้ได้ → mark ว่าใช้แล้วทันที (one-time)
+        await doc.ref.update({ used: true });
+
+        // แสดงเนื้อหาพิเศษ หรือจะ redirect ไปหน้าอื่นก็ได้
+        show("🎉 ยินดีต้อนรับ!<br>โทเค็นถูกต้องและถูกใช้เรียบร้อยแล้ว");
+
+        // ถ้าอยากพาไปหน้า home.html หลังจากเช็กผ่าน:
+        // setTimeout(() => {
+        //   window.location.href = "home.html";
+        // }, 1000);
+
+      } catch (err) {
+        console.error(err);
+        show("⚠ เกิดข้อผิดพลาดในการตรวจสอบโทเค็น");
+      }
+    }
+
+    checkToken();
+  </script>
 </body>
 </html>
